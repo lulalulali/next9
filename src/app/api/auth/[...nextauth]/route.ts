@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest } from "next/server";
 
 // 配置 NextAuth
-const authOptions = {
+const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -11,14 +11,19 @@ const authOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: '/auth/signin',
+    error: '/auth/error',
+    verifyRequest: '/auth/verify-request',
+  },
+  callbacks: {
+    async session({ session, user }) {
+      return session;  // 返回修改后的 session
+    },
+  },
+  debug: true,
 };
 
-// 处理 GET 请求
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
-  return NextAuth(req, res, authOptions);  // 使用 NextApiRequest 和 NextApiResponse
-}
-
-// 处理 POST 请求
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
-  return NextAuth(req, res, authOptions);  // 使用 NextApiRequest 和 NextApiResponse
-}
+// 导出 NextAuth 处理程序
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
