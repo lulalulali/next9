@@ -15,8 +15,9 @@
 //     </html>
 //   );
 // }
+"use client";
 import Link from "next/link";
-
+import { SessionProvider } from "next-auth/react";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
@@ -24,7 +25,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <nav>
           <ul>
             <li>
-              <Link href="/">Home</Link>
+              <Link href="/home">Home</Link>
             </li>
             <li>
               <Link href="/public/about">About</Link>
@@ -37,11 +38,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </li>
           </ul>
         </nav>
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
 };
 
 export default Layout;
-
